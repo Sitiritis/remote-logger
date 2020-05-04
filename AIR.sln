@@ -1,0 +1,35 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AIR", "AIR\AIR.csproj", "{E75E7F36-6B1F-47C0-85B3-382296E22BCA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LoggerTest", "LoggerTest\LoggerTest.csproj", "{A2487910-3FB7-40A1-882F-71396E846E40}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RemoteLogger", "RemoteLogger\RemoteLogger.csproj", "{E19F6076-556A-4699-9D20-AB54B2CD1BA6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+		Export|Any CPU = Export|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E75E7F36-6B1F-47C0-85B3-382296E22BCA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E75E7F36-6B1F-47C0-85B3-382296E22BCA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E75E7F36-6B1F-47C0-85B3-382296E22BCA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E75E7F36-6B1F-47C0-85B3-382296E22BCA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E75E7F36-6B1F-47C0-85B3-382296E22BCA}.Export|Any CPU.ActiveCfg = Export|Any CPU
+		{E75E7F36-6B1F-47C0-85B3-382296E22BCA}.Export|Any CPU.Build.0 = Export|Any CPU
+		{A2487910-3FB7-40A1-882F-71396E846E40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2487910-3FB7-40A1-882F-71396E846E40}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A2487910-3FB7-40A1-882F-71396E846E40}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A2487910-3FB7-40A1-882F-71396E846E40}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A2487910-3FB7-40A1-882F-71396E846E40}.Export|Any CPU.ActiveCfg = Debug|Any CPU
+		{A2487910-3FB7-40A1-882F-71396E846E40}.Export|Any CPU.Build.0 = Debug|Any CPU
+		{E19F6076-556A-4699-9D20-AB54B2CD1BA6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E19F6076-556A-4699-9D20-AB54B2CD1BA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E19F6076-556A-4699-9D20-AB54B2CD1BA6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E19F6076-556A-4699-9D20-AB54B2CD1BA6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E19F6076-556A-4699-9D20-AB54B2CD1BA6}.Export|Any CPU.ActiveCfg = Debug|Any CPU
+		{E19F6076-556A-4699-9D20-AB54B2CD1BA6}.Export|Any CPU.Build.0 = Debug|Any CPU
+	EndGlobalSection
+EndGlobal
