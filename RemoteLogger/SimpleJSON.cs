@@ -5,7 +5,7 @@
  * It mainly has been written as a simple JSON parser. It can build a JSON string
  * from the node-tree, or generate a node tree from any valid JSON string.
  * 
- * Written by Bunny83 
+ * Written by Bunny83
  * 2012-06-09
  * 
  * Changelog now external. See Changelog.txt
