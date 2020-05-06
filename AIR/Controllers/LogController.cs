@@ -1,12 +1,12 @@
 using System;
-using System.Collections.Concurrent;
+using System.Collections.Immutable;
 using System.IO;
-using System.Text.Json;
 using System.Threading.Tasks;
+using AIR.Logger;
 using AIR.Models;
-using AIR.Models.Log;
 using Microsoft.AspNetCore.Mvc;
-using Misc.Attributes;
+using Microsoft.Extensions.Logging;
+using Microsoft.Net.Http.Headers;
 
 namespace AIR.Controllers
 {
@@ -14,17 +14,30 @@ namespace AIR.Controllers
   [Route("[controller]")]
   public class LogController : ControllerBase
   {
-    private ConcurrentDictionary<Guid, SessionLog> sessionsLogs =
-      new ConcurrentDictionary<Guid, SessionLog>();
+    private ITaggedLogger<LoggerTag, LogEntry, MemoryStream> logger;
+
+    public LogController(ITaggedLogger<LoggerTag, LogEntry, MemoryStream> taggedLogger)
+    {
+      this.logger = taggedLogger;
+    }
 
     [Route("newSession")]
     [HttpPost]
     public async Task<IActionResult> newSession([FromBody] ClientMetadata metadata)
     {
       var sessionId = Guid.NewGuid();
-      sessionsLogs[sessionId] = new SessionLog(metadata);
 
       Console.WriteLine($"Session created: {sessionId}"); // TODO: remove
+
+      await logger.Log(
+        LogLevel.Information,
+        new LoggerTag(
+          sessionId,
+          ImmutableList<LogTag>.Empty,
+          metadata
+        ),
+        new LogEntry("Session started", DateTime.Now)
+      );
 
       Response.Cookies.Append("sessionId", sessionId.ToString());
       return Ok();
@@ -32,7 +45,7 @@ namespace AIR.Controllers
 
     [Route("")]
     [HttpPost]
-    public IActionResult Log([FromBody] string message)
+    public async Task<IActionResult> Log([FromBody] string message)
     {
       // TODO: add the entry to the corresponding log entry
 
@@ -40,40 +53,16 @@ namespace AIR.Controllers
       return StatusCode(501);
     }
 
-    // [Route("endSession")]
-    // [HttpPost]
-    // public IActionResult endSession()
-    // {
-    //   Guid sessionId;
-    //
-    //   try
-    //   {
-    //     sessionId = new Guid(Request.Cookies["sessionId"]);
-    //   }
-    //   catch (Exception e)
-    //   {
-    //     return BadRequest(new
-    //     {
-    //       message = "The sessionId in cookies is invalid"
-    //     });
-    //   }
-    //
-    //   SessionLog sessionLog = null;
-    //   if (sessionsLogs.TryRemove(sessionId, out sessionLog))
-    //   {
-    //     Console.WriteLine($"Session removed: {sessionId}"); // TODO: remove
-    //
-    //     sessionLog.save();
-    //   }
-    //   else
-    //   {
-    //     return NotFound(new
-    //     {
-    //       message = $"The {sessionId} session was is not active"
-    //     });
-    //   }
-    //
-    //   return Ok();
-    // }
+    [Route("")]
+    [HttpGet]
+    public async Task<FileStreamResult> GetLogs()
+    {
+      var logsStream = logger.GetLogs();
+
+      return new FileStreamResult(
+        await logsStream,
+        new MediaTypeHeaderValue("application/xml")
+      );
+    }
   }
 }

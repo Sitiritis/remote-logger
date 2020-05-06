@@ -1,3 +1,5 @@
+using System.IO;
+using AIR.Logger;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpOverrides;
@@ -39,8 +41,7 @@ namespace AIR
         }
       );
 
-      // todo inject your logger implementation here
-      // services.AddScoped<ILogger>(provider => new MyLogger());
+      services.AddSingleton<ITaggedLogger<LoggerTag, LogEntry, MemoryStream>>(provider => new TaggedLogger());
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
