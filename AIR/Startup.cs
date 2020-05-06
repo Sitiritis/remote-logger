@@ -32,7 +32,19 @@ namespace AIR
         });
 
 
-      services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo() {Title = "AIR API", Version = "v0.1a"}); });
+      services.AddSwaggerGen(c =>
+      {
+        c.SwaggerDoc(
+          "v1",
+          new OpenApiInfo()
+          {
+            Title = "AIR API",
+            Version = "v0.1a"
+          });
+
+        var filePath = Path.Combine(System.AppContext.BaseDirectory, "AIR.xml");
+        c.IncludeXmlComments(filePath);
+      });
 
       services.AddAuthentication(options => {
           options.DefaultAuthenticateScheme = "forbidScheme";

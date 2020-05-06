@@ -12,6 +12,7 @@ namespace AIR.Controllers
   public class SupportController : ControllerBase
   {
     [Route("ping")]
+    [HttpGet]
     public IActionResult Ping([FromQuery] string arg)
     {
       Console.WriteLine(arg);
