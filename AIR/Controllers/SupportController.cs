@@ -6,8 +6,8 @@ using Misc.Attributes;
 namespace AIR.Controllers
 {
   [ApiController]
-  [ErrorSafe] // todo review
-  // [AuthToken] // todo review
+  [ErrorSafe]
+  // [AuthToken]
   [ProducesResponseType(200)]
   public class SupportController : ControllerBase
   {

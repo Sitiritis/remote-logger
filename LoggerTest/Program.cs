@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Concurrent;
 using System.Threading.Tasks;
 using LS.Support;
 using SimpleJSON;
@@ -22,76 +21,36 @@ namespace LoggerTest
 
     static async Task Main(string[] args)
     {
-      var remoteLogger = await RemoteLogger.getRemoteLogger(new MetadataProvider());
+      var remoteLogger = await RemoteLogger.GetRemoteLogger(new MetadataProvider());
+
+      var programMainTag = new LogTag(
+      "Program",
+        "class",
+            new LogTag("Main", "method")
+        );
+
+      await remoteLogger.LogInformation(programMainTag, "Hello from client");
+
+      var SomeNestedTag = new LogTag(
+          "Level1",
+          new LogTag(
+            "Level2",
+            "type 1",
+            new LogTag(
+                "Level3"
+              )
+          )
+        );
+
+      await remoteLogger.LogWarning(SomeNestedTag, "Warning!");
+      await remoteLogger.LogInformation(SomeNestedTag, "Info");
+      await remoteLogger.LogError(SomeNestedTag, "Some error occurred...");
+
+      await remoteLogger.LogInformation(SomeNestedTag, "There can be many entries in one section");
+
+      await remoteLogger.LogInformation("Root level log");
 
       Console.WriteLine("Finished");
     }
-
-    // private static class Nested
-    // {
-    //   public static void throws()
-    //   {
-    //     Action th = () =>
-    //     {
-    //       // Console.WriteLine(Environment.StackTrace);
-    //
-    //       var stackTrace = new System.Diagnostics.StackTrace(true);
-    //       var frame = stackTrace.GetFrame(0);
-    //       Console.WriteLine(frame?.GetMethod()?.DeclaringType?.FullName);
-    //       Console.WriteLine(frame?.GetMethod()?.Name);
-    //
-    //       void f()
-    //       {
-    //         var stackTrace = new System.Diagnostics.StackTrace(true);
-    //         var frame = stackTrace.GetFrame(0);
-    //         Console.WriteLine(frame?.GetMethod()?.DeclaringType?.FullName);
-    //         Console.WriteLine(frame?.GetMethod()?.Name);
-    //       }
-    //
-    //       f();
-    //     };
-    //
-    //     Action th2 = () =>
-    //     {
-    //       var a = new System.Diagnostics.StackTrace(true);
-    //       var b = a.GetFrame(0);
-    //       Console.WriteLine(b?.GetMethod()?.DeclaringType?.FullName);
-    //       Console.WriteLine(b?.GetMethod()?.Name);
-    //     };
-    //
-    //     var anon = new
-    //     {
-    //       thunk = th
-    //     };
-    //
-    //     anon.thunk.Invoke();
-    //     th2.Invoke();
-    //     // throw new ArgumentException("Invalid value", "param");
-    //   }
-    // }
-    //
-    // static void Main(string[] args)
-    // {
-    //   // todo test RemoteLogger if need
-    //   // Console.WriteLine("Hello World!");
-    //
-    //   try
-    //   {
-    //     void f()
-    //     {
-    //       var stackTrace = new System.Diagnostics.StackTrace(true);
-    //       var frame = stackTrace.GetFrame(0);
-    //       Console.WriteLine(frame?.GetMethod()?.DeclaringType?.FullName);
-    //       Console.WriteLine(frame?.GetMethod()?.Name);
-    //     }
-    //     f();
-    //
-    //     Nested.throws();
-    //   }
-    //   catch (Exception e)
-    //   {
-    //     Console.WriteLine(e.ToString());
-    //   }
-    // }
   }
 }

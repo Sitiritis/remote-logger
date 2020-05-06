@@ -1,18 +1,20 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
+using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.Extensions.Logging;
 using RestSharp;
+using SimpleJSON;
 
 namespace LS.Support
 {
   public class RemoteLogger
   {
+    private readonly RestClient logClient;
+
     private RemoteLogger(CookieContainer severCookies, int timeout = 5000)
     {
-      var logClient = new RestClient(Constants.LogUrl)
+      logClient = new RestClient(Constants.LogUrl)
       {
         Timeout = timeout,
         CookieContainer = severCookies,
@@ -20,7 +22,7 @@ namespace LS.Support
       logClient.AddDefaultHeader("Authorization", $"Bearer {Constants.Token}");
     }
 
-    public static async Task<RemoteLogger> getRemoteLogger(
+    public static async Task<RemoteLogger> GetRemoteLogger(
       IMetadataProvider metadataProvider,
       int establishConnectionTimeout = 5000,
       int logTimeout = 5000
@@ -45,55 +47,78 @@ namespace LS.Support
       return new RemoteLogger(initSessionClient.CookieContainer, logTimeout);
     }
 
-    // ~RemoteLogger()
-    // {
-    //   // var client = new RestClient(Constants.EndSessionUrl)
-    //   // {
-    //   //   Timeout = logClient.Timeout,
-    //   //   CookieContainer = logClient.CookieContainer,
-    //   // };
-    //   // var headers = new Dictionary<string, string>(
-    //   //   logClient.DefaultParameters
-    //   //     .Where(param => param.Type == ParameterType.HttpHeader)
-    //   //     .Select(param =>
-    //   //       new KeyValuePair<string, string>(param.Name, param.Value.ToString())
-    //   //     )
-    //   // );
-    //   // ;
-    //   // client.AddDefaultHeaders(headers);
-    //   //
-    //   // var request = new RestRequest(Method.POST);
-    //   // client.ExecuteAsync(request);
-    //   // In this case there is no need to handle the errors. If some troubles
-    //   // will happen to the request, the server must timeout with the session.
-    // }
+    public async Task Log(LogLevel logLevel, LogTag tag, string message)
+    {
+      var request = new RestRequest(Method.POST);
 
-    private readonly IRestClient logClient;
+      switch (logLevel)
+      {
+        case LogLevel.Information:
+          break;
+        case LogLevel.Warning:
+          break;
+        case LogLevel.Error:
+          break;
+        default:
+          throw new ArgumentOutOfRangeException(
+            nameof(logLevel),
+            logLevel,
+            $"Remote logger supports only {LogLevel.Information}, {LogLevel.Warning} and {LogLevel.Error} log levels"
+          );
+      }
 
-    // public async Task Log(LogLevel logLevel, string message)
-    // {
-    //   switch (logLevel)
-    //   {
-    //     case LogLevel.Trace:
-    //       break;
-    //     case LogLevel.Debug:
-    //       break;
-    //     case LogLevel.Information:
-    //       break;
-    //     case LogLevel.Warning:
-    //       break;
-    //     case LogLevel.Error:
-    //       break;
-    //     case LogLevel.Critical:
-    //       break;
-    //     case LogLevel.None:
-    //       break;
-    //     default:
-    //       throw new ArgumentOutOfRangeException(nameof(logLevel), logLevel, "An unsupported logLevel was passed to the RemoteLogger.Log");
-    //   }
-    //
-    //   // TODO: send request
-    // }
+      var body = new JSONObject();
+      body.Add("level", logLevel.ToString());
+      body.Add("message", message);
+
+      if (tag != null)
+      {
+        body.Add("tags", tag.toJSON());
+      }
+
+      request.AddJsonBody(body.ToString());
+
+      var response = await logClient.ExecuteAsync(request);
+      if (response.ErrorException != null)
+      {
+        throw response.ErrorException;
+      }
+    }
+
+    public async Task Log(LogLevel logLevel, string message)
+    {
+      await Log(logLevel, null, message);
+    }
+
+    public async Task LogInformation(string message)
+    {
+      await Log(LogLevel.Information, null, message);
+    }
+
+    public async Task LogWarning(string message)
+    {
+      await Log(LogLevel.Warning, null, message);
+    }
+
+    public async Task LogError(string message)
+    {
+      await Log(LogLevel.Error, null, message);
+    }
+
+    public async Task LogInformation(LogTag tag, string message)
+    {
+      await Log(LogLevel.Information, tag, message);
+    }
+
+    public async Task LogWarning(LogTag tag, string message)
+    {
+      await Log(LogLevel.Warning, tag, message);
+    }
+
+    public async Task LogError(LogTag tag, string message)
+    {
+      await Log(LogLevel.Error, tag, message);
+    }
 
     private static class Constants
     {
@@ -103,11 +128,8 @@ namespace LS.Support
       public const string
         InitSessionUrl = BaseUrl + "/newSession";
 
-      // public const string
-      //   EndSessionUrl = BaseUrl + "/endSession";
-
       public const string
-        LogUrl = BaseUrl; // TODO: does this work fine?
+        LogUrl = BaseUrl;
 
       public const string
         Token =

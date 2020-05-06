@@ -10,7 +10,13 @@ namespace AIR.Logger
     public readonly IImmutableList<LogTag> TagPath;
     public readonly ClientMetadata? ClientMetadata;
 
-    public LoggerTag(Guid sessionId, IImmutableList<LogTag> tagPath, ClientMetadata? clientMetadata)
+    public LoggerTag(Guid sessionId, IImmutableList<LogTag> tagPath)
+    {
+      SessionId = sessionId;
+      TagPath = tagPath;
+    }
+
+    public LoggerTag(Guid sessionId, IImmutableList<LogTag> tagPath, ClientMetadata clientMetadata)
     {
       SessionId = sessionId;
       TagPath = tagPath;
